@@ -1,0 +1,208 @@
+
+import torch
+from torch import nn, optim
+from torch.utils.data import Dataset, DataLoader
+from typing import List, Tuple
+from word2vec.model import SkipGramModel
+import numpy as np
+from word2vec.utils import build_huffman_tree
+
+class SkipGramDataset(Dataset):
+    def __init__(self, pairs: List[Tuple[int, int]]):
+        self.pairs = pairs
+
+    def __len__(self):
+        return len(self.pairs)
+
+    def __getitem__(self, idx):
+        return torch.tensor(self.pairs[idx][0], dtype=torch.long),                torch.tensor(self.pairs[idx][1], dtype=torch.long)
+
+def train_skipgram(
+    training_pairs: list,
+    vocab_size: int,
+    embedding_dim: int = 100,
+    batch_size: int = 128,
+    epochs: int = 5,
+    lr: float = 0.01,
+    device: str = "cuda" if torch.cuda.is_available() else "cpu"
+):
+    dataset = SkipGramDataset(training_pairs)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    model = SkipGramModel(vocab_size, embedding_dim).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    loss_fn = nn.BCEWithLogitsLoss()
+    losses = []
+
+    for epoch in range(epochs):
+        total_loss = 0
+        for center, context in dataloader:
+            center, context = center.to(device), context.to(device)
+            labels = torch.ones(center.shape[0], device=device)
+            scores = model(center, context)
+            loss = loss_fn(scores, labels)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        avg_loss = total_loss / len(dataloader)
+        print(f"Epoch {epoch+1}: Loss = {avg_loss:.4f}")
+        losses.append(avg_loss)
+
+    return model, losses
+
+def train_skipgram_softmax(
+    training_pairs,
+    vocab_size,
+    embedding_dim=100,
+    batch_size=128,
+    epochs=5,
+    lr=0.01,
+    device="cuda" if torch.cuda.is_available() else "cpu"
+):
+    dataset = SkipGramDataset(training_pairs)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    model = SkipGramModel(vocab_size, embedding_dim).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    loss_fn = nn.CrossEntropyLoss()
+    losses = []
+
+    for epoch in range(epochs):
+        total_loss = 0
+        for center, context in dataloader:
+            center, context = center.to(device), context.to(device)
+            logits = model(center, mode='softmax')  # (batch_size, vocab_size)
+            loss = loss_fn(logits, context)  # context: (batch_size,)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        avg_loss = total_loss / len(dataloader)
+        print(f"[Softmax] Epoch {epoch+1}: Loss = {avg_loss:.4f}")
+        losses.append(avg_loss)
+
+    return model, losses
+
+def get_negative_samples(context_indices, vocab_size, num_negatives):
+    # context_indices: (batch_size,)
+    # Trả về (batch_size, num_negatives) các chỉ số negative context
+    negatives = np.random.choice(vocab_size, size=(len(context_indices), num_negatives), replace=True)
+    return torch.tensor(negatives, dtype=torch.long, device=context_indices.device)
+
+def train_skipgram_neg_sampling(
+    training_pairs,
+    vocab_size,
+    embedding_dim=100,
+    batch_size=128,
+    epochs=5,
+    lr=0.01,
+    num_negatives=5,
+    device="cuda" if torch.cuda.is_available() else "cpu"
+):
+    dataset = SkipGramDataset(training_pairs)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    model = SkipGramModel(vocab_size, embedding_dim).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    loss_fn = nn.BCEWithLogitsLoss()
+    losses = []
+
+    for epoch in range(epochs):
+        total_loss = 0
+        for center, context in dataloader:
+            center, context = center.to(device), context.to(device)
+            batch_size_ = center.shape[0]
+            # Positive score
+            pos_score = model(center, context)  # (batch_size,)
+            pos_labels = torch.ones(batch_size_, device=device)
+            # Negative samples
+            neg_context = get_negative_samples(context, vocab_size, num_negatives)  # (batch_size, num_negatives)
+            neg_center = center.unsqueeze(1).expand(-1, num_negatives).reshape(-1)
+            neg_context = neg_context.reshape(-1)
+            neg_score = model(neg_center, neg_context)  # (batch_size * num_negatives,)
+            neg_labels = torch.zeros(neg_score.shape[0], device=device)
+            # Loss
+            loss = loss_fn(pos_score, pos_labels) + loss_fn(neg_score, neg_labels)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        avg_loss = total_loss / len(dataloader)
+        print(f"[NegSampling] Epoch {epoch+1}: Loss = {avg_loss:.4f}")
+        losses.append(avg_loss)
+
+    return model, losses
+
+def train_skipgram_hierarchical_softmax(
+    training_pairs,
+    vocab_size,
+    embedding_dim=100,
+    batch_size=128,
+    epochs=5,
+    lr=0.01,
+    token_freqs=None,
+    device="cuda" if torch.cuda.is_available() else "cpu"
+):
+    # Xây cây Huffman
+    idx2huffman, internal_nodes, internal_node2idx = build_huffman_tree(token_freqs)
+    num_internal = len(internal_nodes)
+    import torch
+    from torch import nn, optim
+    from torch.utils.data import DataLoader
+    class HierarchicalSkipGramModel(nn.Module):
+        def __init__(self, vocab_size, embedding_dim, num_internal):
+            super().__init__()
+            self.input_embeddings = nn.Embedding(vocab_size, embedding_dim)
+            self.node_embeddings = nn.Embedding(num_internal, embedding_dim)
+        def forward(self, center, paths, codes):
+            batch_size = len(center)
+            losses = []
+            v_c = self.input_embeddings(center)  # (batch_size, embed_dim)
+            for i in range(batch_size):
+                path = paths[i]
+                code = codes[i]
+                if len(path) == 0:
+                    continue
+                node_embeds = self.node_embeddings(torch.tensor(path, device=center.device))  # (len, embed_dim)
+                v = v_c[i].unsqueeze(0)  # (1, embed_dim)
+                logits = (v * node_embeds).sum(dim=1)  # (len,)
+                target = torch.tensor(code, dtype=torch.float, device=center.device)
+                loss = nn.functional.binary_cross_entropy_with_logits(logits, target, reduction='sum')
+                losses.append(loss)
+            if losses:
+                return torch.stack(losses).mean()
+            else:
+                return torch.tensor(0.0, device=center.device)
+        def get_input_embedding(self):
+            return self.input_embeddings.weight.data
+    dataset = SkipGramDataset(training_pairs)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    model = HierarchicalSkipGramModel(vocab_size, embedding_dim, num_internal).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    losses = []
+    for epoch in range(epochs):
+        total_loss = 0
+        for center, context in dataloader:
+            center, context = center.to(device), context.to(device)
+            batch_paths = []
+            batch_codes = []
+            for idx in context.cpu().numpy():
+                idx_int = int(idx)
+                if idx_int not in idx2huffman:
+                    continue
+                code, path = idx2huffman[idx_int]
+                path_idx = [internal_node2idx[n] for n in path if n in internal_node2idx]
+                batch_paths.append(path_idx)
+                batch_codes.append(code)
+            if not batch_paths:
+                continue
+            loss = model(center[:len(batch_paths)], batch_paths, batch_codes)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        avg_loss = total_loss / len(dataloader)
+        print(f"[HierarchicalSoftmax] Epoch {epoch+1}: Loss = {avg_loss:.4f}")
+        losses.append(avg_loss)
+    return model, losses

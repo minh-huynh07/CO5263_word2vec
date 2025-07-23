@@ -1,0 +1,506 @@
+the father loves the mother
+the mother loves the father
+the brother plays with the sister
+the sister helps the brother
+the dog chases the cat
+the cat climbs the tree
+the teacher teaches the student
+the doctor helps the patient
+the nurse works at the hospital
+the apple is red
+the sky is blue
+the grass is green
+the sun is yellow
+the king and the queen rule the land
+the prince and the princess play in the garden
+the car is fast
+the bus is slow
+the train is long
+the football player scores a goal
+the basketball player shoots the ball
+the chef cooks the meal
+the baker bakes the bread
+the police officer catches the thief
+the fireman saves the child
+the pilot flies the airplane
+the sailor sails the boat
+the farmer grows the crops
+the cow gives milk
+the horse runs in the field
+the bird sings in the tree
+the fish swims in the water
+the lion is the king of the jungle
+the elephant has a long trunk
+the monkey climbs the tree
+the rabbit eats the carrot
+the mouse is small
+the frog jumps in the pond
+the snake crawls on the ground
+the bear sleeps in the cave
+the wolf howls at night
+the fox is clever
+the sheep follows the shepherd
+the goat eats the grass
+the chicken lays eggs
+the duck swims in the pond
+the turkey is big
+the peacock has beautiful feathers
+the parrot can talk
+the owl is wise
+the eagle flies high
+the penguin lives in the cold
+the dolphin jumps in the sea
+the shark has sharp teeth
+the whale is huge
+the octopus has eight arms
+the crab walks sideways
+the lobster is red
+the shrimp is small
+the turtle moves slowly
+the crocodile has a big mouth
+the camel lives in the desert
+the kangaroo jumps high
+the panda eats bamboo
+the giraffe has a long neck
+the zebra has stripes
+the hippo lives in the river
+the rhino has a horn
+the squirrel eats nuts
+the deer runs fast
+the moose has big antlers
+the raccoon washes its food
+the skunk has a strong smell
+the bat flies at night
+the ant works hard
+the bee makes honey
+the butterfly is colorful
+the spider spins a web
+the worm lives in the soil
+the snail moves slowly
+the ladybug is red
+the grasshopper jumps far
+the dragonfly flies quickly
+the mosquito bites people
+the fly lands on food
+the caterpillar becomes a butterfly
+the apple is sweet
+the banana is yellow
+the orange is juicy
+the grape is purple
+the lemon is sour
+the cherry is small
+the strawberry is red
+the watermelon is big
+the pineapple has a crown
+the mango is delicious
+the peach is soft
+the plum is purple
+the pear is green
+the kiwi is brown
+the coconut has hard shell
+the tomato is red
+the potato grows underground
+the carrot is orange
+the onion makes you cry
+the garlic has a strong smell
+the lettuce is green
+the cucumber is cool
+the pepper is spicy
+the corn grows tall
+the rice is white
+the bread is fresh
+the cheese is yellow
+the butter is soft
+the egg is oval
+the milk is white
+the yogurt is sour
+the chicken is cooked
+the beef is tasty
+the pork is pink
+the lamb is tender
+the fish is fried
+the shrimp is grilled
+the crab is boiled
+the soup is hot
+the salad is cold
+the pizza is cheesy
+the burger is big
+the sandwich is simple
+the pasta is Italian
+the noodle is long
+the cake is sweet
+the cookie is crunchy
+the pie is round
+the ice cream is cold
+the chocolate is sweet
+the candy is colorful
+the juice is fresh
+the tea is hot
+the coffee is strong
+the water is clear
+the soda is fizzy
+the wine is red
+the beer is cold
+the school is big
+the classroom is bright
+the teacher is kind
+the student is smart
+the desk is wooden
+the chair is hard
+the board is green
+the chalk is white
+the book is open
+the pen is blue
+the pencil is sharp
+the eraser is small
+the ruler is long
+the bag is heavy
+the bell rings loud
+the playground is fun
+the ball is round
+the jump rope is long
+the slide is tall
+the swing moves fast
+the seesaw goes up and down
+the computer is new
+the mouse is black
+the keyboard is white
+the screen is bright
+the printer prints fast
+the phone rings often
+the camera takes pictures
+the television is big
+the radio plays music
+the lamp is bright
+the clock shows time
+the watch is small
+the fan is cool
+the air conditioner is cold
+the heater is warm
+the fridge is cold
+the oven is hot
+the microwave heats food
+the blender mixes juice
+the toaster makes toast
+the vacuum cleans the floor
+the broom sweeps the room
+the mop cleans the floor
+the bucket holds water
+the soap is slippery
+the towel is soft
+the toothbrush is blue
+the toothpaste is minty
+the shampoo is bubbly
+the comb is black
+the mirror is clear
+the bed is soft
+the pillow is fluffy
+the blanket is warm
+the sheet is clean
+the wardrobe is big
+the drawer is full
+the table is round
+the chair is wooden
+the sofa is comfortable
+the carpet is soft
+the curtain is long
+the window is open
+the door is closed
+the wall is white
+the floor is clean
+the roof is high
+the garden is green
+the tree is tall
+the flower is beautiful
+the grass is short
+the bush is thick
+the leaf is green
+the branch is long
+the root is deep
+the fruit is sweet
+the seed is small
+the pot is brown
+the shovel is metal
+the rake is wide
+the hose is long
+the watering can is full
+the car is red
+the bike is blue
+the bus is yellow
+the train is fast
+the airplane flies high
+the boat sails on water
+the ship is big
+the truck carries goods
+the motorcycle is fast
+the scooter is small
+the taxi is yellow
+the subway is underground
+the tram is old
+the van is white
+the ambulance is fast
+the fire truck is red
+the police car is blue
+the bicycle is green
+the skateboard is cool
+the roller skate is fun
+the horse carriage is old
+the rocket flies to space
+the astronaut travels in space
+the satellite orbits the earth
+the planet is round
+the moon is bright
+the star shines at night
+the sun is hot
+the cloud is white
+the rain is wet
+the snow is cold
+the wind blows strong
+the storm is loud
+the thunder is scary
+the lightning is bright
+the rainbow is colorful
+the mountain is high
+the hill is green
+the valley is deep
+the river flows fast
+the lake is calm
+the sea is big
+the ocean is deep
+the island is small
+the beach is sandy
+the desert is dry
+the forest is dense
+the jungle is wild
+the park is clean
+the zoo has many animals
+the city is busy
+the town is quiet
+the village is small
+the street is long
+the road is wide
+the bridge is strong
+the tunnel is dark
+the building is tall
+the house is cozy
+the apartment is modern
+the hotel is big
+the restaurant is busy
+the cafe is small
+the shop sells food
+the market is crowded
+the mall is large
+the bank is safe
+the post office is near
+the hospital is clean
+the clinic is small
+the pharmacy sells medicine
+the library has many books
+the museum is interesting
+the theater shows plays
+the cinema shows movies
+the stadium is huge
+the gym is modern
+the swimming pool is blue
+the playground is fun
+the amusement park is exciting
+the circus is funny
+the concert is loud
+the festival is colorful
+the parade is long
+the fair is fun
+the race is fast
+the match is close
+the tournament is big
+the competition is tough
+the champion wins the prize
+the coach trains the team
+the referee watches the game
+the player scores a goal
+the fan cheers loudly
+the artist paints pictures
+the musician plays music
+the singer sings songs
+the dancer dances gracefully
+the actor acts in movies
+the writer writes stories
+the poet writes poems
+the photographer takes photos
+the designer draws clothes
+the engineer builds bridges
+the architect designs houses
+the scientist does experiments
+the doctor treats patients
+the nurse helps the doctor
+the dentist fixes teeth
+the lawyer defends clients
+the judge makes decisions
+the police officer keeps order
+the firefighter puts out fires
+the soldier protects the country
+the pilot flies planes
+the sailor sails ships
+the driver drives cars
+the farmer grows crops
+the baker bakes bread
+the chef cooks food
+the waiter serves food
+the cashier takes money
+the shopkeeper sells goods
+the cleaner cleans rooms
+the gardener takes care of plants
+the mechanic fixes cars
+the electrician repairs wires
+the plumber fixes pipes
+the carpenter builds furniture
+the painter paints walls
+the tailor makes clothes
+the barber cuts hair
+the hairdresser styles hair
+the beautician does makeup
+the actor performs on stage
+the singer sings on stage
+the dancer dances on stage
+the magician does tricks
+the clown makes people laugh
+the acrobat does stunts
+the juggler juggles balls
+the gymnast flips on the mat
+the swimmer swims fast
+the runner runs quickly
+the cyclist rides a bike
+the skater skates on ice
+the skier skis down the hill
+the snowboarder rides the snow
+the surfer rides the waves
+the diver jumps into the water
+the boxer fights in the ring
+the wrestler wrestles hard
+the fencer fights with swords
+the archer shoots arrows
+the shooter shoots targets
+the golfer hits the ball
+the tennis player hits the ball
+the table tennis player plays ping pong
+the badminton player hits the shuttlecock
+the volleyball player serves the ball
+the baseball player hits the ball
+the cricket player bats the ball
+the hockey player hits the puck
+the rugby player tackles hard
+the football player kicks the ball
+the basketball player dunks the ball
+the handball player throws the ball
+the chess player moves pieces
+the checkers player jumps pieces
+the card player shuffles cards
+the board game player rolls dice
+the video game player plays games
+the computer programmer writes code
+the web developer builds websites
+the app developer makes apps
+the data scientist analyzes data
+the ai researcher trains models
+the teacher explains lessons
+the student learns quickly
+the parent helps the child
+the child plays with toys
+the baby sleeps in the crib
+the friend visits the house
+the neighbor says hello
+the guest rings the bell
+the host welcomes the guest
+the couple walks in the park
+the family eats dinner together
+the group takes a photo
+the team wins the game
+the crowd cheers loudly
+the audience claps hands
+the speaker gives a speech
+the leader leads the group
+the member joins the club
+the visitor tours the city
+the tourist takes pictures
+the guide shows the way
+the driver drives the bus
+the passenger rides the train
+the conductor checks tickets
+the guard watches the gate
+the worker builds the road
+the manager leads the team
+the boss gives orders
+the employee works hard
+the colleague helps at work
+the partner shares ideas
+the customer buys products
+the client pays money
+the supplier delivers goods
+the producer makes products
+the manufacturer builds machines
+the distributor ships goods
+the retailer sells products
+the wholesaler sells in bulk
+the agent finds clients
+the broker arranges deals
+the investor invests money
+the banker lends money
+the accountant counts money
+the auditor checks accounts
+the consultant gives advice
+the analyst studies data
+the planner makes plans
+the researcher does research
+the scientist discovers facts
+the inventor creates things
+the innovator brings new ideas
+the entrepreneur starts a business
+the businessman runs a company
+the businesswoman manages a company
+the executive makes decisions
+the director directs the movie
+the producer produces the film
+the editor edits the video
+the cameraman films the scene
+the reporter writes news
+the journalist reports stories
+the anchor reads the news
+the photographer takes pictures
+the model poses for photos
+the designer creates fashion
+the stylist styles clothes
+the tailor sews clothes
+the shoemaker makes shoes
+the jeweler makes jewelry
+the watchmaker repairs watches
+the optician fixes glasses
+the pharmacist gives medicine
+the doctor prescribes medicine
+the nurse gives injections
+the dentist cleans teeth
+the vet treats animals
+the zookeeper feeds animals
+the animal trainer trains animals
+the pet owner loves pets
+the dog barks loudly
+the cat purrs softly
+the bird chirps sweetly
+the fish swims quietly
+the rabbit hops quickly
+the hamster runs in the wheel
+the turtle hides in the shell
+the lizard basks in the sun
+the snake slithers on the ground
+the frog croaks at night
+the cricket chirps at night
+the butterfly flutters by the flower
+the bee buzzes near the hive
+the ant crawls on the ground
+the spider weaves a web
+the worm wiggles in the soil
+the snail crawls slowly
+the ladybug lands on the leaf
+the grasshopper leaps in the grass
+the dragonfly hovers over the pond
+the mosquito flies near the water
+the fly buzzes around the room
+the caterpillar crawls on the leaf 
