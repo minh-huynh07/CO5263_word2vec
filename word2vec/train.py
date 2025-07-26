@@ -206,3 +206,215 @@ def train_skipgram_hierarchical_softmax(
         print(f"[HierarchicalSoftmax] Epoch {epoch+1}: Loss = {avg_loss:.4f}")
         losses.append(avg_loss)
     return model, losses
+
+# CBOW Dataset
+class CBOWDataset(Dataset):
+    def __init__(self, pairs: List[Tuple[List[int], int]]):
+        self.pairs = pairs
+        # Tìm max context length để pad
+        self.max_context_len = max(len(context) for context, _ in pairs) if pairs else 0
+
+    def __len__(self):
+        return len(self.pairs)
+
+    def __getitem__(self, idx):
+        context_words, center = self.pairs[idx]
+        # Pad context_words về max_context_len
+        padded_context = context_words + [0] * (self.max_context_len - len(context_words))
+        return torch.tensor(padded_context, dtype=torch.long), torch.tensor(center, dtype=torch.long)
+
+# CBOW Model
+class CBOWModel(nn.Module):
+    def __init__(self, vocab_size: int, embedding_dim: int):
+        super().__init__()
+        self.context_embeddings = nn.Embedding(vocab_size, embedding_dim)
+        self.output_embeddings = nn.Embedding(vocab_size, embedding_dim)
+
+    def forward(self, context_words: torch.Tensor, center: torch.Tensor = None, mode: str = 'dot') -> torch.Tensor:
+        # context_words: (batch_size, num_context) hoặc (num_context,)
+        # Average context embeddings (bỏ qua padding tokens - index 0)
+        context_embeds = self.context_embeddings(context_words)  # (batch_size, num_context, embed_dim) hoặc (num_context, embed_dim)
+        
+        # Tạo mask để bỏ qua padding tokens (index 0)
+        mask = (context_words != 0).float().unsqueeze(-1)  # (batch_size, num_context, 1) hoặc (num_context, 1)
+        
+        # Tính weighted average (chỉ tính các token thật)
+        masked_embeds = context_embeds * mask
+        sum_embeds = masked_embeds.sum(dim=-2)  # (batch_size, embed_dim) hoặc (embed_dim,)
+        count = mask.sum(dim=-2)  # (batch_size, 1) hoặc (1,)
+        avg_context = sum_embeds / (count + 1e-8)  # Tránh chia cho 0
+        
+        if mode == 'softmax':
+            # Trả về logits cho toàn bộ vocab
+            logits = torch.matmul(avg_context, self.output_embeddings.weight.t())  # (batch_size, vocab_size) hoặc (vocab_size,)
+            return logits
+        else:
+            # center: (batch_size,) hoặc scalar
+            center_embed = self.output_embeddings(center)  # (batch_size, embed_dim) hoặc (embed_dim,)
+            score = (avg_context * center_embed).sum(dim=-1)  # (batch_size,) hoặc scalar
+            return score
+
+    def get_input_embedding(self):
+        return self.context_embeddings.weight.data
+
+def train_cbow_softmax(
+    training_pairs,
+    vocab_size,
+    embedding_dim=100,
+    batch_size=128,
+    epochs=5,
+    lr=0.01,
+    device="cuda" if torch.cuda.is_available() else "cpu"
+):
+    dataset = CBOWDataset(training_pairs)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    model = CBOWModel(vocab_size, embedding_dim).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    loss_fn = nn.CrossEntropyLoss()
+    losses = []
+
+    for epoch in range(epochs):
+        total_loss = 0
+        for context_words, center in dataloader:
+            context_words, center = context_words.to(device), center.to(device)
+            logits = model(context_words, mode='softmax')  # (batch_size, vocab_size)
+            loss = loss_fn(logits, center)  # center: (batch_size,)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        avg_loss = total_loss / len(dataloader)
+        print(f"[CBOW-Softmax] Epoch {epoch+1}: Loss = {avg_loss:.4f}")
+        losses.append(avg_loss)
+
+    return model, losses
+
+def train_cbow_neg_sampling(
+    training_pairs,
+    vocab_size,
+    embedding_dim=100,
+    batch_size=128,
+    epochs=5,
+    lr=0.01,
+    num_negatives=5,
+    device="cuda" if torch.cuda.is_available() else "cpu"
+):
+    dataset = CBOWDataset(training_pairs)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+    model = CBOWModel(vocab_size, embedding_dim).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    loss_fn = nn.BCEWithLogitsLoss()
+    losses = []
+
+    for epoch in range(epochs):
+        total_loss = 0
+        for context_words, center in dataloader:
+            context_words, center = context_words.to(device), center.to(device)
+            batch_size_ = center.shape[0]
+            # Positive score
+            pos_score = model(context_words, center)  # (batch_size,)
+            pos_labels = torch.ones(batch_size_, device=device)
+            # Negative samples
+            neg_center = get_negative_samples(center, vocab_size, num_negatives)  # (batch_size, num_negatives)
+            neg_context = context_words.unsqueeze(1).expand(-1, num_negatives, -1).reshape(-1, context_words.shape[-1])
+            neg_center = neg_center.reshape(-1)
+            neg_score = model(neg_context, neg_center)  # (batch_size * num_negatives,)
+            neg_labels = torch.zeros(neg_score.shape[0], device=device)
+            # Loss
+            loss = loss_fn(pos_score, pos_labels) + loss_fn(neg_score, neg_labels)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        avg_loss = total_loss / len(dataloader)
+        print(f"[CBOW-NegSampling] Epoch {epoch+1}: Loss = {avg_loss:.4f}")
+        losses.append(avg_loss)
+
+    return model, losses
+
+def train_cbow_hierarchical_softmax(
+    training_pairs,
+    vocab_size,
+    embedding_dim=100,
+    batch_size=128,
+    epochs=5,
+    lr=0.01,
+    token_freqs=None,
+    device="cuda" if torch.cuda.is_available() else "cpu"
+):
+    # Xây cây Huffman
+    idx2huffman, internal_nodes, internal_node2idx = build_huffman_tree(token_freqs)
+    num_internal = len(internal_nodes)
+    
+    class HierarchicalCBOWModel(nn.Module):
+        def __init__(self, vocab_size, embedding_dim, num_internal):
+            super().__init__()
+            self.context_embeddings = nn.Embedding(vocab_size, embedding_dim)
+            self.node_embeddings = nn.Embedding(num_internal, embedding_dim)
+        def forward(self, context_words, paths, codes):
+            batch_size = len(context_words)
+            losses = []
+            # Average context embeddings (bỏ qua padding tokens)
+            context_embeds = self.context_embeddings(context_words)  # (batch_size, num_context, embed_dim)
+            
+            # Tạo mask để bỏ qua padding tokens (index 0)
+            mask = (context_words != 0).float().unsqueeze(-1)  # (batch_size, num_context, 1)
+            
+            # Tính weighted average (chỉ tính các token thật)
+            masked_embeds = context_embeds * mask
+            sum_embeds = masked_embeds.sum(dim=1)  # (batch_size, embed_dim)
+            count = mask.sum(dim=1)  # (batch_size, 1)
+            avg_context = sum_embeds / (count + 1e-8)  # Tránh chia cho 0
+            
+            for i in range(batch_size):
+                path = paths[i]
+                code = codes[i]
+                if len(path) == 0:
+                    continue
+                node_embeds = self.node_embeddings(torch.tensor(path, device=context_words.device))  # (len, embed_dim)
+                v = avg_context[i].unsqueeze(0)  # (1, embed_dim)
+                logits = (v * node_embeds).sum(dim=1)  # (len,)
+                target = torch.tensor(code, dtype=torch.float, device=context_words.device)
+                loss = nn.functional.binary_cross_entropy_with_logits(logits, target, reduction='sum')
+                losses.append(loss)
+            if losses:
+                return torch.stack(losses).mean()
+            else:
+                return torch.tensor(0.0, device=context_words.device)
+        def get_input_embedding(self):
+            return self.context_embeddings.weight.data
+    
+    dataset = CBOWDataset(training_pairs)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    model = HierarchicalCBOWModel(vocab_size, embedding_dim, num_internal).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    losses = []
+    
+    for epoch in range(epochs):
+        total_loss = 0
+        for context_words, center in dataloader:
+            context_words, center = context_words.to(device), center.to(device)
+            batch_paths = []
+            batch_codes = []
+            for idx in center.cpu().numpy():
+                idx_int = int(idx)
+                if idx_int not in idx2huffman:
+                    continue
+                code, path = idx2huffman[idx_int]
+                path_idx = [internal_node2idx[n] for n in path if n in internal_node2idx]
+                batch_paths.append(path_idx)
+                batch_codes.append(code)
+            if not batch_paths:
+                continue
+            loss = model(context_words[:len(batch_paths)], batch_paths, batch_codes)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        avg_loss = total_loss / len(dataloader)
+        print(f"[CBOW-HierarchicalSoftmax] Epoch {epoch+1}: Loss = {avg_loss:.4f}")
+        losses.append(avg_loss)
+
+    return model, losses

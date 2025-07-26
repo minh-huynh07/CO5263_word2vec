@@ -44,3 +44,17 @@ def get_skip_gram_pairs(tokens: List[str], vocab: Vocab, max_window: int = 5) ->
                 context = vocab[tokens[j]]
                 pairs.append((center, context))
     return pairs
+
+def get_cbow_pairs(tokens: List[str], vocab: Vocab, max_window: int = 5) -> List[Tuple[List[int], int]]:
+    pairs = []
+    for i in range(len(tokens)):
+        window_size = random.randint(1, max_window)
+        center = vocab[tokens[i]]
+        context_words = []
+        for j in range(max(0, i - window_size), min(len(tokens), i + window_size + 1)):
+            if i != j:
+                context = vocab[tokens[j]]
+                context_words.append(context)
+        if context_words:  # chỉ thêm nếu có context words
+            pairs.append((context_words, center))
+    return pairs
