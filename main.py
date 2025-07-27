@@ -25,7 +25,7 @@ def main():
         print(f"Generated {len(pairs)} skip-gram pairs")
 
     # === Train model ===
-    train_method = getattr(config, 'train_method', 'softmax')  # 'softmax', 'dot', 'neg_sampling', hoặc 'hierarchical_softmax'
+    train_method = getattr(config, 'train_method', 'softmax')  # 'softmax', 'dot', 'neg_sampling', or 'hierarchical_softmax'
     start = time.time()
     if model_type == 'cbow':
         # CBOW training
@@ -64,7 +64,7 @@ def main():
             print(f"Unknown train_method for CBOW: {train_method}")
             return
     else:
-        # Skip-gram training (code cũ)
+        # Skip-gram training (original code)
         if train_method == 'softmax':
             from word2vec.train import train_skipgram_softmax
             model, losses = train_skipgram_softmax(
@@ -152,7 +152,7 @@ def main():
 
     # === Evaluate similarities before and after training ===
     words_to_check = ["king", "queen", "dog", "cat", "teacher", "student", "car", "apple", "red", "blue"]
-    # Khởi tạo model giống như khi train để lấy embedding trước train
+    # Initialize model similar to training to get embeddings before training
     if model_type == 'cbow':
         # CBOW initialization
         if train_method == 'softmax':
@@ -162,7 +162,7 @@ def main():
                 vocab_size=len(vocab),
                 embedding_dim=config.embedding_dim,
                 batch_size=config.batch_size,
-                epochs=0,  # không train
+                epochs=0,  # no training
                 lr=config.learning_rate
             )
         elif train_method == 'neg_sampling':
@@ -190,7 +190,7 @@ def main():
             print(f"Unknown train_method for CBOW: {train_method}")
             return
     else:
-        # Skip-gram initialization (code cũ)
+        # Skip-gram initialization (original code)
         if train_method == 'softmax':
             from word2vec.train import train_skipgram_softmax
             model_init, _ = train_skipgram_softmax(
@@ -198,7 +198,7 @@ def main():
                 vocab_size=len(vocab),
                 embedding_dim=config.embedding_dim,
                 batch_size=config.batch_size,
-                epochs=0,  # không train
+                epochs=0,  # no training
                 lr=config.learning_rate
             )
         elif train_method == 'neg_sampling':
@@ -269,7 +269,7 @@ def main():
     test_analogy("down", "rabbit", "hole")
     test_analogy("tea", "hatter", "garden")
 
-    # Chọn các từ tiêu biểu cho visualization
+    # Select representative words for visualization
     viz_words = [
         "father", "mother", "brother", "sister", "dog", "cat", "lion", "elephant", "teacher", "student", "doctor", "nurse", "apple", "banana", "red", "blue", "green", "car", "bus", "train", "king", "queen", "prince", "princess"
     ]
@@ -277,8 +277,8 @@ def main():
     visualize_embedding_pca_2d(embedding_matrix_init, embedding_matrix_trained, vocab, viz_words, title_prefix="PCA 2D: ")
     # 2. Heatmap similarity
     visualize_similarity_heatmap(embedding_matrix_init, embedding_matrix_trained, vocab, viz_words[:12], title_prefix="Heatmap: ")
-    # 3. Analogy vector (ví dụ: king - man + woman ≈ queen, hoặc father - man + woman ≈ mother)
-    analogy_triplet = ("father", "mother", "brother", "sister")  # hoặc đổi thành ("king", "queen", "prince", "princess")
+    # 3. Analogy vector (example: king - man + woman ≈ queen, or father - man + woman ≈ mother)
+    analogy_triplet = ("father", "mother", "brother", "sister")  # or change to ("king", "queen", "prince", "princess")
     visualize_analogy_vector(embedding_matrix_init, embedding_matrix_trained, vocab, analogy_triplet, title_prefix="Analogy: ")
 
 if __name__ == "__main__":

@@ -55,6 +55,6 @@ def get_cbow_pairs(tokens: List[str], vocab: Vocab, max_window: int = 5) -> List
             if i != j:
                 context = vocab[tokens[j]]
                 context_words.append(context)
-        if context_words:  # chỉ thêm nếu có context words
+        if context_words:  # only add if there are context words
             pairs.append((context_words, center))
     return pairs

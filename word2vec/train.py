@@ -86,7 +86,7 @@ def train_skipgram_softmax(
 
 def get_negative_samples(context_indices, vocab_size, num_negatives):
     # context_indices: (batch_size,)
-    # Trả về (batch_size, num_negatives) các chỉ số negative context
+    # Returns (batch_size, num_negatives) negative context indices
     negatives = np.random.choice(vocab_size, size=(len(context_indices), num_negatives), replace=True)
     return torch.tensor(negatives, dtype=torch.long, device=context_indices.device)
 
@@ -144,7 +144,7 @@ def train_skipgram_hierarchical_softmax(
     token_freqs=None,
     device="cuda" if torch.cuda.is_available() else "cpu"
 ):
-    # Xây cây Huffman
+    # Build Huffman tree
     idx2huffman, internal_nodes, internal_node2idx = build_huffman_tree(token_freqs)
     num_internal = len(internal_nodes)
     import torch
@@ -211,7 +211,7 @@ def train_skipgram_hierarchical_softmax(
 class CBOWDataset(Dataset):
     def __init__(self, pairs: List[Tuple[List[int], int]]):
         self.pairs = pairs
-        # Tìm max context length để pad
+        # Find max context length to pad
         self.max_context_len = max(len(context) for context, _ in pairs) if pairs else 0
 
     def __len__(self):
@@ -219,7 +219,7 @@ class CBOWDataset(Dataset):
 
     def __getitem__(self, idx):
         context_words, center = self.pairs[idx]
-        # Pad context_words về max_context_len
+        # Pad context_words to max_context_len
         padded_context = context_words + [0] * (self.max_context_len - len(context_words))
         return torch.tensor(padded_context, dtype=torch.long), torch.tensor(center, dtype=torch.long)
 
@@ -231,27 +231,27 @@ class CBOWModel(nn.Module):
         self.output_embeddings = nn.Embedding(vocab_size, embedding_dim)
 
     def forward(self, context_words: torch.Tensor, center: torch.Tensor = None, mode: str = 'dot') -> torch.Tensor:
-        # context_words: (batch_size, num_context) hoặc (num_context,)
-        # Average context embeddings (bỏ qua padding tokens - index 0)
-        context_embeds = self.context_embeddings(context_words)  # (batch_size, num_context, embed_dim) hoặc (num_context, embed_dim)
+        # context_words: (batch_size, num_context) or (num_context,)
+        # Average context embeddings (ignore padding tokens - index 0)
+        context_embeds = self.context_embeddings(context_words)  # (batch_size, num_context, embed_dim) or (num_context, embed_dim)
         
-        # Tạo mask để bỏ qua padding tokens (index 0)
-        mask = (context_words != 0).float().unsqueeze(-1)  # (batch_size, num_context, 1) hoặc (num_context, 1)
+        # Create mask to ignore padding tokens (index 0)
+        mask = (context_words != 0).float().unsqueeze(-1)  # (batch_size, num_context, 1) or (num_context, 1)
         
-        # Tính weighted average (chỉ tính các token thật)
+        # Calculate weighted average (only count real tokens)
         masked_embeds = context_embeds * mask
-        sum_embeds = masked_embeds.sum(dim=-2)  # (batch_size, embed_dim) hoặc (embed_dim,)
-        count = mask.sum(dim=-2)  # (batch_size, 1) hoặc (1,)
-        avg_context = sum_embeds / (count + 1e-8)  # Tránh chia cho 0
+        sum_embeds = masked_embeds.sum(dim=-2)  # (batch_size, embed_dim) or (embed_dim,)
+        count = mask.sum(dim=-2)  # (batch_size, 1) or (1,)
+        avg_context = sum_embeds / (count + 1e-8)  # Avoid division by zero
         
         if mode == 'softmax':
-            # Trả về logits cho toàn bộ vocab
-            logits = torch.matmul(avg_context, self.output_embeddings.weight.t())  # (batch_size, vocab_size) hoặc (vocab_size,)
+            # Return logits for entire vocabulary
+            logits = torch.matmul(avg_context, self.output_embeddings.weight.t())  # (batch_size, vocab_size) or (vocab_size,)
             return logits
         else:
-            # center: (batch_size,) hoặc scalar
-            center_embed = self.output_embeddings(center)  # (batch_size, embed_dim) hoặc (embed_dim,)
-            score = (avg_context * center_embed).sum(dim=-1)  # (batch_size,) hoặc scalar
+            # center: (batch_size,) or scalar
+            center_embed = self.output_embeddings(center)  # (batch_size, embed_dim) or (embed_dim,)
+            score = (avg_context * center_embed).sum(dim=-1)  # (batch_size,) or scalar
             return score
 
     def get_input_embedding(self):
@@ -344,7 +344,7 @@ def train_cbow_hierarchical_softmax(
     token_freqs=None,
     device="cuda" if torch.cuda.is_available() else "cpu"
 ):
-    # Xây cây Huffman
+    # Build Huffman tree
     idx2huffman, internal_nodes, internal_node2idx = build_huffman_tree(token_freqs)
     num_internal = len(internal_nodes)
     
@@ -356,17 +356,17 @@ def train_cbow_hierarchical_softmax(
         def forward(self, context_words, paths, codes):
             batch_size = len(context_words)
             losses = []
-            # Average context embeddings (bỏ qua padding tokens)
+            # Average context embeddings (ignore padding tokens)
             context_embeds = self.context_embeddings(context_words)  # (batch_size, num_context, embed_dim)
             
-            # Tạo mask để bỏ qua padding tokens (index 0)
+            # Create mask to ignore padding tokens (index 0)
             mask = (context_words != 0).float().unsqueeze(-1)  # (batch_size, num_context, 1)
             
-            # Tính weighted average (chỉ tính các token thật)
+            # Calculate weighted average (only count real tokens)
             masked_embeds = context_embeds * mask
             sum_embeds = masked_embeds.sum(dim=1)  # (batch_size, embed_dim)
             count = mask.sum(dim=1)  # (batch_size, 1)
-            avg_context = sum_embeds / (count + 1e-8)  # Tránh chia cho 0
+            avg_context = sum_embeds / (count + 1e-8)  # Avoid division by zero
             
             for i in range(batch_size):
                 path = paths[i]

@@ -9,5 +9,5 @@ max_window_size = 2
 
 data_path = "data/toy_corpus.txt"
 
-model_type = 'cbow'  # 'skipgram' hoặc 'cbow'
-train_method = 'hierarchical_softmax'  # 'softmax', 'dot' (BCE), 'neg_sampling', hoặc 'hierarchical_softmax'
+model_type = 'cbow'  # 'skipgram' or 'cbow'
+train_method = 'hierarchical_softmax'  # 'softmax', 'dot' (BCE), 'neg_sampling', or 'hierarchical_softmax'

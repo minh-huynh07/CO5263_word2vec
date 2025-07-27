@@ -25,7 +25,7 @@ def analogy(a_idx: int, b_idx: int, c_idx: int, embedding_matrix: np.ndarray, to
     return sorted_indices[:top_k].tolist()
 
 def visualize_embedding_pca_2d(embedding_matrix_before, embedding_matrix_after, vocab, words, title_prefix=""):
-    # Lấy index các từ cần vẽ
+    # Get indices of words to plot
     indices = [vocab.token_to_idx[w] for w in words if w in vocab.token_to_idx]
     if not indices:
         print("No valid words to visualize.")
@@ -93,7 +93,7 @@ def visualize_analogy_vector(embedding_matrix_before, embedding_matrix_after, vo
         plt.scatter(emb2d[:, 0], emb2d[:, 1], c='red')
         for j, w in enumerate(words):
             plt.annotate(w, (emb2d[j, 0], emb2d[j, 1]))
-        # Vẽ vector analogy: b - a + c -> expected
+        # Plot analogy vector: b - a + c -> expected
         plt.arrow(emb2d[0, 0], emb2d[0, 1], emb2d[1, 0] - emb2d[0, 0], emb2d[1, 1] - emb2d[0, 1], color='gray', head_width=0.1)
         plt.arrow(emb2d[2, 0], emb2d[2, 1], emb2d[3, 0] - emb2d[2, 0], emb2d[3, 1] - emb2d[2, 1], color='blue', head_width=0.1)
         plt.title(f"{title_prefix}{title} (Analogy)")

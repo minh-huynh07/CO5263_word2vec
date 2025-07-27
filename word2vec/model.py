@@ -11,7 +11,7 @@ class SkipGramModel(nn.Module):
     def forward(self, center: torch.Tensor, context: torch.Tensor = None, mode: str = 'dot') -> torch.Tensor:
         v_c = self.input_embeddings(center)  # (batch_size, embed_dim)
         if mode == 'softmax':
-            # Trả về logits cho toàn bộ vocab
+            # Return logits for entire vocabulary
             logits = torch.matmul(v_c, self.output_embeddings.weight.t())  # (batch_size, vocab_size)
             return logits
         else:

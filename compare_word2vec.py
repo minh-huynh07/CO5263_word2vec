@@ -17,14 +17,14 @@ def compare_word2vec_models():
     cbow_methods = set(cbow_df['train_method'].unique())
     common_methods = skipgram_methods.intersection(cbow_methods)
     
-    print(f"📋 Available methods:")
+    print(f"Available methods:")
     print(f"  Skip-gram: {list(skipgram_methods)}")
     print(f"  CBOW: {list(cbow_methods)}")
     print(f"  Common methods to compare: {list(common_methods)}")
     print()
     
     if not common_methods:
-        print("❌ No common methods found between the two files!")
+        print("No common methods found between the two files!")
         return
     
     # Create a combined dataframe for easier analysis
@@ -55,7 +55,7 @@ def compare_word2vec_models():
     results_df = pd.DataFrame(all_results)
     
     # 1. Basic comparison table
-    print("📊 COMPARISON TABLE:")
+    print("COMPARISON TABLE:")
     print(f"{'Model':<12} {'Method':<20} {'Time(s)':<8} {'Final Loss':<12} {'Pairs':<8}")
     print("-" * 70)
     
@@ -65,7 +65,7 @@ def compare_word2vec_models():
     print("\n" + "="*70)
     
     # 2. Create comprehensive plots
-    print("\n📈 VISUALIZATION:")
+    print("\nVISUALIZATION:")
     
     num_methods = len(common_methods)
     if num_methods <= 3:
@@ -182,7 +182,7 @@ def compare_word2vec_models():
     print(f"• Fastest Training: {fastest_model}-{fastest_method} (Time: {fastest_time:.2f}s)")
     
     # Method comparison
-    print("\n📊 METHOD COMPARISON:")
+    print("\nMETHOD COMPARISON:")
     
     # Compare each method between CBOW and Skip-gram
     for method in common_methods:
@@ -200,7 +200,7 @@ def compare_word2vec_models():
             print(f"  - Speed: {cbow_time:.2f}s vs {skipgram_time:.2f}s (CBOW {skipgram_time/cbow_time:.2f}x faster)")
     
     # Model comparison
-    print("\n📊 MODEL COMPARISON:")
+    print("\nMODEL COMPARISON:")
     
     # Compare each model across methods
     models = ['Skip-gram', 'CBOW']
