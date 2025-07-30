@@ -4,7 +4,7 @@
 
 ## Overview
 
-This project implements Word2Vec models with multiple training methods, including Skip-gram and CBOW architectures, along with three different training approaches: Softmax, Negative Sampling, and Hierarchical Softmax. The implementation follows the concepts from the d2l.ai textbook and provides comprehensive evaluation and comparison tools.
+This project implements Word2Vec models with multiple training methods, including Skip-gram and CBOW architectures, along with two different training approaches: Softmax and Negative Sampling. The implementation follows the concepts from the d2l.ai textbook and provides comprehensive evaluation and comparison tools.
 
 ## Project Structure
 
@@ -16,19 +16,14 @@ word2vec_assignment/
 ├── requirements.txt          # Python dependencies
 ├── README.md                 # This file
 ├── data/
-│   ├── sample.txt           # Main corpus file (toy corpus for visualization)
-│   ├── alice.txt            # Alice in Wonderland corpus (backup)
-│   └── toy_corpus.txt       # Custom small corpus for better visualization
+│   └── toy_corpus.txt        # Custom small corpus for training & visualization
 ├── word2vec/
 │   ├── __init__.py
-│   ├── dataset.py           # Data loading and pair generation
-│   ├── model.py             # Model architectures (Skip-gram, CBOW)
-│   ├── train.py             # Training functions for all methods
-│   ├── evaluate.py          # Evaluation and visualization functions
-│   └── utils.py             # Utility functions (Huffman tree)
-├── train_log_skipgram.csv   # Training logs for Skip-gram models
-├── train_log_cbow.csv       # Training logs for CBOW models
-└── word2vec_comparison.png  # Generated comparison plots
+│   ├── dataset.py            # Data loading and pair generation
+│   ├── model.py              # Model architectures (Skip-gram, CBOW)
+│   ├── train.py              # Training functions for all methods
+│   ├── evaluate.py           # Evaluation and visualization functions
+│   └── utils.py              # Utility functions
 ```
 
 ## Components
@@ -41,7 +36,7 @@ word2vec_assignment/
 - **max_window_size**: Maximum context window size (default: 2)
 - **data_path**: Path to the corpus file
 - **model_type**: Choose between 'skipgram' or 'cbow'
-- **train_method**: Choose between 'softmax', 'neg_sampling', or 'hierarchical_softmax'
+- **train_method**: Choose between 'softmax' or 'neg_sampling'
 
 ### 2. Data Processing (`word2vec/dataset.py`)
 - **read_corpus()**: Reads and tokenizes text corpus
@@ -61,12 +56,10 @@ word2vec_assignment/
 #### Skip-gram Training Functions:
 - **train_skipgram_softmax()**: Full softmax training with CrossEntropyLoss
 - **train_skipgram_neg_sampling()**: Negative sampling with BCEWithLogitsLoss
-- **train_skipgram_hierarchical_softmax()**: Hierarchical softmax with Huffman tree
 
 #### CBOW Training Functions:
 - **train_cbow_softmax()**: Full softmax training for CBOW
 - **train_cbow_neg_sampling()**: Negative sampling for CBOW
-- **train_cbow_hierarchical_softmax()**: Hierarchical softmax for CBOW
 
 ### 5. Evaluation (`word2vec/evaluate.py`)
 - **find_similar()**: Find most similar words using cosine similarity
@@ -115,7 +108,7 @@ pandas
 model_type = 'skipgram'  # or 'cbow'
 
 # Choose training method
-train_method = 'softmax'  # 'softmax', 'neg_sampling', or 'hierarchical_softmax'
+train_method = 'softmax'  # 'softmax', 'neg_sampling'
 
 # Other parameters
 embedding_dim = 100
@@ -153,16 +146,6 @@ train_method = 'neg_sampling'
 python3 main.py
 ```
 
-#### Skip-gram with Hierarchical Softmax:
-```python
-# In config.py
-model_type = 'skipgram'
-train_method = 'hierarchical_softmax'
-```
-```bash
-python3 main.py
-```
-
 #### CBOW with Softmax:
 ```python
 # In config.py
@@ -178,16 +161,6 @@ python3 main.py
 # In config.py
 model_type = 'cbow'
 train_method = 'neg_sampling'
-```
-```bash
-python3 main.py
-```
-
-#### CBOW with Hierarchical Softmax:
-```python
-# In config.py
-model_type = 'cbow'
-train_method = 'hierarchical_softmax'
 ```
 ```bash
 python3 main.py
@@ -254,12 +227,6 @@ The comparison script provides:
 - **Pros**: Much faster than full softmax
 - **Cons**: Approximation may reduce quality slightly
 
-### 3. Hierarchical Softmax
-- **Concept**: Uses Huffman tree to approximate softmax
-- **Loss Function**: BCEWithLogitsLoss on tree paths
-- **Pros**: Efficient for large vocabularies
-- **Cons**: More complex implementation, slower than negative sampling
-
 ## Model Architectures
 
 ### 1. Skip-gram
@@ -282,12 +249,6 @@ The comparison script provides:
 - **Purpose**: Better visualization and understanding of word clusters
 - **Themes**: Family, animals, jobs, colors, vehicles, royalty
 
-### 2. Alice in Wonderland (`data/alice.txt`)
-- **Size**: ~30,000 words
-- **Content**: Full text from Project Gutenberg
-- **Purpose**: Larger corpus for better model training
-- **Source**: Project Gutenberg
-
 ## Output Files
 
 ### 1. Training Logs
@@ -300,42 +261,3 @@ The comparison script provides:
 - **PCA plots**: Before/after training embeddings
 - **Heatmaps**: Word similarity matrices
 - **Analogy plots**: Vector relationship visualizations
-
-## Performance Insights
-
-Based on typical results:
-- **CBOW** generally outperforms **Skip-gram** in both speed and accuracy
-- **Negative Sampling** provides the best balance of speed and performance
-- **Hierarchical Softmax** is slower but can be more memory efficient
-- **Softmax** is the slowest but theoretically most accurate
-
-## Troubleshooting
-
-### Common Issues:
-1. **ModuleNotFoundError**: Ensure virtual environment is activated
-2. **CUDA errors**: Models automatically use CPU if CUDA unavailable
-3. **Memory issues**: Reduce batch_size or embedding_dim
-4. **Training time**: Hierarchical softmax is significantly slower
-
-### Performance Tips:
-1. Use smaller corpus for quick testing
-2. Reduce epochs for faster iteration
-3. Use negative sampling for best speed/performance balance
-4. CBOW is generally faster than Skip-gram
-
-## Future Enhancements
-
-Potential improvements:
-1. Add more evaluation metrics (WordSim, SimLex)
-2. Implement subword embeddings (FastText)
-3. Add support for pre-trained embeddings
-4. Implement distributed training
-5. Add more visualization options
-6. Support for different languages
-
-## References
-
-- [Word2Vec Paper](https://arxiv.org/abs/1301.3781)
-- [d2l.ai Word2Vec Chapter](https://d2l.ai/chapter_natural-language-processing-pretraining/word2vec.html)
-- [PyTorch Documentation](https://pytorch.org/docs/)
-- [Project Gutenberg](https://www.gutenberg.org/) 

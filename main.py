@@ -50,16 +50,9 @@ def main():
                 lr=config.learning_rate
             )
         elif train_method == 'hierarchical_softmax':
-            from word2vec.train import train_cbow_hierarchical_softmax
-            model, losses = train_cbow_hierarchical_softmax(
-                training_pairs=pairs,
-                vocab_size=len(vocab),
-                embedding_dim=config.embedding_dim,
-                batch_size=config.batch_size,
-                epochs=config.epochs,
-                lr=config.learning_rate,
-                token_freqs=vocab.token_freqs
-            )
+            # hierarchical_softmax is no longer supported
+            print("hierarchical_softmax is no longer supported. Please use 'softmax' or 'neg_sampling'.")
+            return
         else:
             print(f"Unknown train_method for CBOW: {train_method}")
             return
@@ -86,16 +79,9 @@ def main():
                 lr=config.learning_rate
             )
         elif train_method == 'hierarchical_softmax':
-            from word2vec.train import train_skipgram_hierarchical_softmax
-            model, losses = train_skipgram_hierarchical_softmax(
-                training_pairs=pairs,
-                vocab_size=len(vocab),
-                embedding_dim=config.embedding_dim,
-                batch_size=config.batch_size,
-                epochs=config.epochs,
-                lr=config.learning_rate,
-                token_freqs=vocab.token_freqs
-            )
+            # hierarchical_softmax is no longer supported
+            print("hierarchical_softmax is no longer supported. Please use 'softmax' or 'neg_sampling'.")
+            return
         else:
             from word2vec.train import train_skipgram
             model, losses = train_skipgram(
@@ -176,16 +162,9 @@ def main():
                 lr=config.learning_rate
             )
         elif train_method == 'hierarchical_softmax':
-            from word2vec.train import train_cbow_hierarchical_softmax
-            model_init, _ = train_cbow_hierarchical_softmax(
-                training_pairs=pairs,
-                vocab_size=len(vocab),
-                embedding_dim=config.embedding_dim,
-                batch_size=config.batch_size,
-                epochs=0,
-                lr=config.learning_rate,
-                token_freqs=vocab.token_freqs
-            )
+            # hierarchical_softmax is no longer supported
+            print("hierarchical_softmax is no longer supported. Please use 'softmax' or 'neg_sampling'.")
+            return
         else:
             print(f"Unknown train_method for CBOW: {train_method}")
             return
@@ -212,16 +191,9 @@ def main():
                 lr=config.learning_rate
             )
         elif train_method == 'hierarchical_softmax':
-            from word2vec.train import train_skipgram_hierarchical_softmax
-            model_init, _ = train_skipgram_hierarchical_softmax(
-                training_pairs=pairs,
-                vocab_size=len(vocab),
-                embedding_dim=config.embedding_dim,
-                batch_size=config.batch_size,
-                epochs=0,
-                lr=config.learning_rate,
-                token_freqs=vocab.token_freqs
-            )
+            # hierarchical_softmax is no longer supported
+            print("hierarchical_softmax is no longer supported. Please use 'softmax' or 'neg_sampling'.")
+            return
         else:
             from word2vec.train import train_skipgram
             model_init, _ = train_skipgram(
